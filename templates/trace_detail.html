@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>Page for trace n° {{ trace.id }}</h3>
+
+<p><strong>{{ trace.name }}</strong></p></br>
+<p>{{ trace.comment }}</p></br>
+
+{% if trace.has_geom %}
+<p>Localisation</p>
+
+<div id="map" style="height: 250px;"></div>
+
+<script type="text/javascript">
+    
+    var map = L.map('map',{zoom:15}).setView([{{ trace.Y }}, {{ trace.X }}], 15);
+    
+    var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  });
+    
+    map.addLayer(layer);
+    
+    L.marker([{{ trace.Y }}, {{ trace.X }}]).addTo(map)
+
+</script>
+{% endif %}
+
+{% endblock %}
+

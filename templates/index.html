@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Current Traces</h3>
+
+<hr>
+<ul>
+{% for trace in traces %}
+    <li>
+        <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> 
+    </li>
+{% endfor %}
+</ul>
+<hr>
+<a href="{{ url_for('new_trace') }}">Add a new trace</a>
+
+{% endblock %}
