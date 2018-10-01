@@ -1,9 +1,19 @@
+import os
+
 POSTGRES = {
     'user': 'postgres',
-    'pw': 'postgres',
-    'db': 'traceVtt',
+    'password': 'postgres',
+    'database': 'traceVtt',
     'host': 'localhost',
     'port': '5432',
 }
 SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:\
-%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+%(password)s@%(host)s:%(port)s/%(database)s' % POSTGRES
+
+UPLOAD_FOLDER = 'media/'
+
+TRACKS_TYPES = ['enduro', 'XC', 'DH']
+
+ALLOWED_EXTENSIONS = ['gpx',]
+
+SECRET_KEY = 'soighiognfg'

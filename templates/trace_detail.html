@@ -3,28 +3,28 @@
 {% block content %}
 <h3>Page for trace n° {{ trace.id }}</h3>
 
-<p><strong>{{ trace.name }}</strong></p></br>
+<p><strong>{{ trace.name }}</strong></p>
 <p>{{ trace.comment }}</p></br>
+<p>Créé le {{ trace.created_at }}</p>
 
-{% if trace.has_geom %}
 <p>Localisation</p>
 
-<div id="map" style="height: 250px;"></div>
+<div id="map"></div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
-    
-    var map = L.map('map',{zoom:15}).setView([{{ trace.Y }}, {{ trace.X }}], 15);
+    var map = L.map('map',{zoom:15}).setView([48,6], 15);
+    $.getJSON("/api/traces/{{ trace.id }}", function(data) {
+        var geojson = L.geoJson(data).addTo(map)
+        });
     
     var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  });
+        });
     
     map.addLayer(layer);
-    
-    L.marker([{{ trace.Y }}, {{ trace.X }}]).addTo(map)
 
 </script>
-{% endif %}
 
 {% endblock %}
 

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form method="post" id="trace_form">
+<form method="post" id="trace_form" enctype=multipart/form-data>
         <p>Nom<br>
         <input type="text" name="name"><br>
         <p>type<br>
@@ -14,18 +14,8 @@
         <p>Commentaire<br>
         <textarea name="comment" form="trace_form"></textarea><br>
         <br>
-        <div id=map></div>
+        <input type="file" name="gpx_file">
         <p><input type="submit" value="Ajouter">
 </form>
-<script type="text/javascript">
-    
-    var map = L.map('map',{zoom:15}).setView([48,6], 15);
 
-    var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        });
-    
-    map.addLayer(layer);
-
-</script>
 {% endblock %}

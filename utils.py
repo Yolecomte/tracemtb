@@ -1,0 +1,50 @@
+import psycopg2
+from geojson import Feature, FeatureCollection, loads
+
+class DB_GeoJson(object):
+    def __init__(self, database, user, password, port, host):
+        self.connection = psycopg2.connect(database=database, user=user, password=password, port=port, host=host)
+        self.cursor = self.connection.cursor()
+
+    def get_table_as_geojson(self, table_name):
+
+        self.cursor.execute("""SELECT ST_AsGeoJson(geom) AS geometry ,
+                                        * 
+                               FROM {}""".format(table_name))
+        
+        datas = []
+
+        for row in self.cursor.fetchall():
+            if row[0]:
+                geom = loads(row[0])
+            else:
+                geom = None
+            fields = [field[0] for field in self.cursor.description]
+            props = dict(zip(fields,row))
+            datas.append(Feature(properties=props,
+                                    geometry=geom))
+        
+        return FeatureCollection(datas)
+
+    def get_single_data_as_geojson(self, table_name, id):
+        
+        self.cursor.execute("""SELECT ST_AsGeoJson(geom) AS geometry ,
+                                        * 
+                               FROM {}
+                               WHERE id = {}""".format(table_name, id))
+        
+        datas = []
+
+        for row in self.cursor.fetchall():
+            if row[0]:
+                geom = loads(row[0])
+            else:
+                geom = None
+            fields = [field[0] for field in self.cursor.description]
+            props = dict(zip(fields,row))
+            datas.append(Feature(properties=props,
+                                    geometry=geom))
+        
+        return FeatureCollection(datas)
+
+        
