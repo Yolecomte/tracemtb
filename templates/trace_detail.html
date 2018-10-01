@@ -11,6 +11,8 @@
 
 <div id="map"></div>
 
+<a href="{{ url_for('delete_trace', trace_id = trace.id) }}" class="critical">Delete this trace</a>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
     var map = L.map('map',{zoom:15}).setView([48,6], 15);

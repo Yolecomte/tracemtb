@@ -61,7 +61,6 @@ def new_trace_gpx():
                 if lat > 40.0:
                     wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
         wkt = wkt[:-1] + ')'
-        print wkt
         db.session.add(Traces(request.form['name'],
                             request.form['comment'],
                             request.form['type'],
