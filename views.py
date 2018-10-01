@@ -53,19 +53,31 @@ def new_trace_gpx():
             loaded_gpx = open(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             gpx = gpxpy.parse(loaded_gpx)
         routes = gpx.routes
+        tracks = gpx.tracks
         wkt = 'SRID=4326;LINESTRING('
-        for route in routes:
-            for point in route.points:
-                lgt = float(point.longitude)
-                lat = float(point.latitude)
-                if lat > 40.0:
-                    wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
-        wkt = wkt[:-1] + ')'
+        if routes:
+            for route in routes:
+                for point in route.points:
+                    lgt = float(point.longitude)
+                    lat = float(point.latitude)
+                    if lat > 40.0:
+                        wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
+            wkt = wkt[:-1] + ')'
+        elif tracks:
+            for track in tracks:
+                for segment in track.segments:
+                    for point in segment.points:
+                        lgt = float(point.longitude)
+                        lat = float(point.latitude)
+                        if lat > 40.0:
+                            wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
+            wkt = wkt[:-1] + ')'
         db.session.add(Traces(request.form['name'],
                             request.form['comment'],
                             request.form['type'],
                             geom = wkt))
         db.session.commit()
+        return redirect(url_for('home'))
     return render_template('new_gpx_trace.html', types_available=app.config['TRACKS_TYPES'])        
 
 @app.route('/traces/delete/<trace_id>')
