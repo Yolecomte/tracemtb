@@ -8,9 +8,11 @@ from utils import DB_GeoJson
 import geojson
 import gpxpy
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
 
 app = Flask(__name__)
 app.config.from_object('config')

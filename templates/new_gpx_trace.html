@@ -2,20 +2,19 @@
 
 {% block content %}
 
-<form method="post" id="trace_form" enctype=multipart/form-data>
-        <p>Nom<br>
-        <input type="text" name="name"><br>
-        <p>type<br>
-        <select name="type"> 
-                {% for elem in types_available %}
-                <option value = "{{elem}}">{{ elem }}</option>"
-                {% endfor %}
-        </select>
-        <p>Commentaire<br>
-        <textarea name="comment" form="trace_form"></textarea><br>
-        <br>
-        <input type="file" name="gpx_file">
-        <p><input type="submit" value="Ajouter">
-</form>
+        <form method="post" id="trace_form" enctype=multipart/form-data>
+                <p>Nom<br>
+                <input type="text" name="name"><br>
+                <p>type<br>
+                <select name="type"> 
+                        {% for elem in types_available %}
+                                <option value = "{{elem}}">{{ elem }}</option>"
+                        {% endfor %}
+                </select>
+                <p>Commentaire<br>
+                <textarea name="comment" form="trace_form"></textarea><br>
+                <input type="file" name="gpx_file">
+                <p><input type="submit" value="Ajouter">
+        </form>
 
 {% endblock %}

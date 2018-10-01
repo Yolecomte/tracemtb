@@ -2,37 +2,37 @@
 
 {% block content %}
 
-<h3>Current Traces</h3>
+    <h3>Current Traces</h3>
 
-<hr>
-<ul>
-{% for trace in traces %}
-    <li>
-        <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> 
-    </li>
-    
-{% endfor %}
-</ul>
-<hr>
+    <hr>
+    <ul>
+        {% for trace in traces %}
+        <li>
+            <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> 
+        </li>
+        {% endfor %}
+    </ul>
+    <hr>
 
-<a href="{{ url_for('new_trace') }}">Draw a new trace</a>     
-<a href="{{ url_for('new_trace_gpx') }}">Load a new trace from GPX file</a>
+    <div><a href="{{ url_for('new_trace') }}">Draw a new trace</a></div> 
+    <div><a href="{{ url_for('new_trace_gpx') }}">Load a new trace from GPX file</a></div>
 
-<div id="map"></div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script type="text/javascript">
+    <div id="map"></div>
     
-    var map = L.map('map',{zoom:11}).setView([48,6], 11);
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
     
-    $.getJSON("/api/traces/", function(data) {
-        var geojson = L.geoJson(data).addTo(map)
-        });
+        var map = L.map('map',{zoom:11}).setView([48,6], 11);
     
-    var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  });
+        $.getJSON("/api/traces/", function(data) {
+            var geojson = L.geoJson(data).addTo(map)
+            });
     
-    map.addLayer(layer);
+        var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            });
+    
+        map.addLayer(layer);
 
-</script>
+    </script>
 {% endblock %}
