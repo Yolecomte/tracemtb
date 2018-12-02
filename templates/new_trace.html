@@ -1,31 +1,56 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<form method="post" id="trace_form">
+<div class="formulaire col-md-4">
+    <h3>Draw a new trace on the map</h3>
+    <form method="post" id="trace_form">
         <p>Nom<br>
         <input type="text" name="name"><br>
+
         <p>type<br>
         <select name="type"> 
-                {% for elem in types_available %}
+            {% for elem in types_available %}
                 <option value = "{{elem}}">{{ elem }}</option>"
-                {% endfor %}
+            {% endfor %}
         </select>
+    
         <p>Commentaire<br>
         <textarea name="comment" form="trace_form"></textarea><br>
         <br>
-        <div id=map></div>
-        <p><input type="submit" value="Ajouter">
-</form>
-<script type="text/javascript">
     
-    var map = L.map('map',{zoom:15}).setView([48,6], 15);
+        <textarea name="wkt_geom" form="trace_form"></textarea>
 
-    var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        });
-    
-    map.addLayer(layer);
+        <p><input type="submit" value="Ajouter" class="btn btn-success">
+    </form>
+</div>
+<div id=map class="col-md-7"></div>
+
+{% include 'map.html' %}
+
+<script>
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+    var drawControl = new L.Control.Draw({
+        draw: {
+            polygon: false,
+            marker: false,
+            rectangle: false,
+            circle: false,
+            circlemarker: false
+        },
+        edit: {
+            featureGroup: drawnItems, layer
+        }
+    });
+    map.addControl(drawControl);
+
+    map.on(L.Draw.Event.CREATED, function (e) {
+        var layer = e.layer;
+        map.addLayer(layer);
+        var geojson_layer = layer.toGeoJSON();
+        var wkt = Terraformer.WKT.convert(geojson_layer.geometry);
+        $('textarea[name=wkt_geom]').html(wkt)
+    })
 
 </script>
 {% endblock %}

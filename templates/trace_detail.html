@@ -1,31 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Page for trace n° {{ trace.id }}</h3>
-
-    <p><strong>{{ trace.name }}</strong></p>
+<div class="trace_detail">
+    <div class="col-md-4">
+    <h3>{{ trace.name }}</h3>
+    
+    <p>Créé le {{ trace.created_at.strftime('%Y-%m-%d')}}</p>
+    
     <p>{{ trace.comment }}</p><br>
-    <p>Créé le {{ trace.created_at }}</p>
-
-    <p>Localisation</p>
-
-    <div id="map"></div>
-
-    <a href="{{ url_for('delete_trace', trace_id = trace.id) }}" class="critical">Delete this trace</a>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        var map = L.map('map',{zoom:15}).setView([48,6], 15);
     
-        $.getJSON("/api/traces/{{ trace.id }}", function(data) {
-            var geojson = L.geoJson(data).addTo(map)
-            });
+        <div class="btn-group" role="toolbar">
+            <a href="{{ url_for('delete_trace', trace_id = trace.id) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+            <a href="#" class="btn btn-default disabled"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+            <a href="#" class="btn btn-default disabled"><span class="glyphicon glyphicon-download-alt"></span> Download GPX</a>
+        </div>
+    </div>
+</div>
+
+<div id="map" class="col-md-7"></div>
+
+    {% include 'map.html' %}
+
+<script type="text/javascript">
     
-        var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            });
-    
-        map.addLayer(layer);
-    </script>
+    $.getJSON("/api/traces/{{ trace.id }}", function(data) {
+        var geojson = L.geoJson(data).addTo(map)
+        });
+
+</script>
 {% endblock %}
 

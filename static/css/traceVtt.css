@@ -1,8 +1,30 @@
-#map{
-    height:400px;
-    width:50%;
+header{
+    padding: 5px;
+    background-image: linear-gradient(lightgray,white);
 }
 
-.critical{
-    color: red;
+html, body{
+    height: 100%;
+    margin: 0;   
+}
+
+body{
+    background-color: rgba(0,0,0,255);
+}
+
+.trace_detail, .formulaire{
+    padding: 10px;
+}
+
+.list-title *{
+    display:inline;
+    vertical-align: bottom;
+}
+
+#nav{
+    padding: 10px;
+}
+
+#map{
+    height: 1000px;
 }

@@ -1,0 +1,11 @@
+<!-- //Initialise a base map in div 'map'-->
+<script type="text/javascript">
+    
+    var map = L.map('map',{zoom:15}).setView([48.173,6.447], 12);
+
+    var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+    
+    map.addLayer(layer);
+</script>

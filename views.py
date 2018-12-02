@@ -19,10 +19,14 @@ app.config.from_object('config')
 conn = DB_GeoJson(**app.config['POSTGRES'])
 
 @app.route('/')
-@app.route('/traces/')
-def home():
-    traces = Traces.query.all()
-    return render_template('index.html', traces=traces)
+def index():
+    return redirect(url_for('home'))
+@app.route('/traces/page/')
+@app.route('/traces/page/<int:page>')
+def home(page=1):
+    per_page = 5
+    traces = Traces.query.paginate(page, per_page, error_out=False)
+    return render_template('index.html', traces=traces, home_button=False)
 
 @app.route('/api/traces/')
 def api_traces():
@@ -36,10 +40,10 @@ def new_trace():
         db.session.add(Traces(request.form['name'],
                               request.form['comment'],
                               request.form['type'],
-                              geom = user_geom))
+                              geom = 'SRID=4326;'+request.form['wkt_geom']))
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('new_trace.html', types_available=app.config['TRACKS_TYPES'])
+    return render_template('new_trace.html', types_available=app.config['TRACKS_TYPES'], home_button=True)
 
 @app.route('/traces/new/gpx/', methods=['POST','GET'])
 def new_trace_gpx():
@@ -80,7 +84,7 @@ def new_trace_gpx():
                             geom = wkt))
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('new_gpx_trace.html', types_available=app.config['TRACKS_TYPES'])        
+    return render_template('new_gpx_trace.html', types_available=app.config['TRACKS_TYPES'],home_button=True)        
 
 @app.route('/traces/delete/<trace_id>')
 def delete_trace(trace_id):
@@ -91,7 +95,7 @@ def delete_trace(trace_id):
 @app.route('/traces/<trace_id>')
 def trace(trace_id):
     trace = Traces.query.get(trace_id)
-    return render_template('trace_detail.html',trace=trace)
+    return render_template('trace_detail.html',trace=trace, home_button=True)
 
 @app.route('/api/traces/<trace_id>')
 def api_trace(trace_id):

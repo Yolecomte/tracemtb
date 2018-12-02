@@ -1,38 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="trace_detail">
+    {% if traces %}
+        <div class="list-title">
+        <h3>Current Traces </h3><p>({{traces.total}} traces)</p>
+        </div>
+        <hr>
+        <ul>
+            {% for trace in traces.items %}
+            <li>
+                <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> <i style="color:grey">(Créé le {{trace.created_at.strftime('%Y-%m-%d')}})</i>
+            </li>
+            {% endfor %}
+            
+        </ul>
+        {% if traces.has_prev %}<a href="{{ url_for('home', page=traces.prev_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>{% endif %}
+        {% if traces.has_next %}<a href="{{ url_for('home', page=traces.next_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-right"></span></a>{% endif %}
+        <hr>
+        
+    {% else %}
+    <h3>No Traces loaded</h3>
 
-    <h3>Current Traces</h3>
+    <p>You can add traces by drawing it or load it from a GPX file</p>
 
-    <hr>
-    <ul>
-        {% for trace in traces %}
-        <li>
-            <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> 
-        </li>
-        {% endfor %}
-    </ul>
-    <hr>
-
-    <div><a href="{{ url_for('new_trace') }}">Draw a new trace</a></div> 
-    <div><a href="{{ url_for('new_trace_gpx') }}">Load a new trace from GPX file</a></div>
-
-    <div id="map"></div>
+    {% endif %}
+</div>
     
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<div id="map"></div>
+
+    {% include 'map.html' %}
     <script type="text/javascript">
-    
-        var map = L.map('map',{zoom:11}).setView([48,6], 11);
-    
         $.getJSON("/api/traces/", function(data) {
             var geojson = L.geoJson(data).addTo(map)
             });
-    
-        var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            });
-    
-        map.addLayer(layer);
-
     </script>
 {% endblock %}
