@@ -1,5 +1,5 @@
 import os
-import local.py
+from local import *
 
 SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:\
 %(password)s@%(host)s:%(port)s/%(database)s' % POSTGRES
