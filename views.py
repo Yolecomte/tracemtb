@@ -21,6 +21,7 @@ conn = DB_GeoJson(**app.config['POSTGRES'])
 @app.route('/')
 def index():
     return redirect(url_for('home'))
+    
 @app.route('/traces/page/')
 @app.route('/traces/page/<int:page>')
 def home(page=1):
