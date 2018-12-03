@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+        
+
 <div class="formulaire col-md-4">
         <h3>Load a trace from a gpx file</h3>
         <form method="post" id="trace_form" enctype=multipart/form-data>
@@ -18,7 +21,7 @@
                 <textarea name="comment" form="trace_form"></textarea><br>
                 
                 <input type="file" name="gpx_file">
-                
+                {% include 'flash.html' %}
                 <p><input type="submit" class="btn btn-success" value="Ajouter">
         </form>
 </div>

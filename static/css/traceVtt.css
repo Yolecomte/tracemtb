@@ -3,17 +3,26 @@ header{
     background-image: linear-gradient(lightgray,white);
 }
 
-html, body{
-    height: 100%;
+html, body, .container-fluid{
+    height: calc(100% - 75px);
     margin: 0;   
 }
 
-body{
-    background-color: rgba(0,0,0,255);
+.container-fluid{
+    display: table;
+    width: 100% !important;
+    padding: 0 !important; /*set left/right padding according to needs*/
+    box-sizing: border-box;
 }
 
-.trace_detail, .formulaire{
+.row {
+    height: 100%;
+    display: table-row;
+}
+
+.trace-detail, .formulaire{
     padding: 10px;
+    text-align:center;
 }
 
 .list-title *{
@@ -26,5 +35,15 @@ body{
 }
 
 #map{
-    height: 1000px;
+    height: 100%;
+}
+
+.flashes .error{
+    background-color: lightpink;
+    color:darkred;
+}
+
+.flashes .success{
+    background-color: #DBF4DA;
+    color:darkgreen;
 }

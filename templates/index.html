@@ -1,38 +1,65 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="trace_detail">
+
+{% include 'flash.html' %}
+
+<div class="trace-detail col-md-4">
     {% if traces %}
         <div class="list-title">
         <h3>Current Traces </h3><p>({{traces.total}} traces)</p>
         </div>
+        
         <hr>
-        <ul>
-            {% for trace in traces.items %}
-            <li>
-                <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> <i style="color:grey">(Créé le {{trace.created_at.strftime('%Y-%m-%d')}})</i>
-            </li>
-            {% endfor %}
+           
+        {% for trace in traces.items %}
+           <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> <i style="color:grey">(Créé le {{trace.created_at.strftime('%Y-%m-%d')}})</i><br />
+        {% endfor %}
+
+        <p>-</p>
             
-        </ul>
-        {% if traces.has_prev %}<a href="{{ url_for('home', page=traces.prev_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>{% endif %}
-        {% if traces.has_next %}<a href="{{ url_for('home', page=traces.next_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-right"></span></a>{% endif %}
-        <hr>
+        <div class="btn-group" role="toolbar">
+        {% if traces.has_prev %}
+            <a href="{{ url_for('home', page=traces.prev_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>
+        {% else %}
+            <a href="#" class="btn btn-default btn-xs disabled"><span class="glyphicon glyphicon-menu-left"></span></a>
+        {% endif %}
+        {% if traces and traces.pages > 1 %}
+            {% for page in traces.iter_pages() %}
+                {% if traces.page == page %}
+                    <a href="{{ url_for('home', page=page)}}" class="btn btn-primary btn-xs">{{ page }}</a>
+                {% else %}
+                    <a href="{{ url_for('home', page=page)}}" class="btn btn-default btn-xs">{{ page }}</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %} 
+        {% if traces.has_next %}
+            <a href="{{ url_for('home', page=traces.next_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-right"></span></a>
+        {% else %}
+            <a href="#" class="btn btn-default btn-xs disabled"><span class="glyphicon glyphicon-menu-right"></span></a>
+        {% endif %}
+        </div>
         
     {% else %}
-    <h3>No Traces loaded</h3>
+        <h3>No Traces loaded</h3>
 
-    <p>You can add traces by drawing it or load it from a GPX file</p>
+        <p>You can add traces by drawing it or load it from a GPX file</p>
 
     {% endif %}
 </div>
     
-<div id="map"></div>
+<div id="map" class="col-md-7"></div>
 
     {% include 'map.html' %}
     <script type="text/javascript">
         $.getJSON("/api/traces/", function(data) {
-            var geojson = L.geoJson(data).addTo(map)
+            var geojson = L.geoJson(data,{
+                onEachFeature: function(feature, layer) {
+                    tmp = "<p>"+feature.properties.name+"</p>"
+                    layer.bindPopup(tmp);
+                    }
+                }).addTo(map)
+                map.fitBounds(geojson.getBounds());
             });
     </script>
 {% endblock %}

@@ -1,19 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="trace_detail">
-    <div class="col-md-4">
+{}
+<div class="trace-detail col-md-4">
     <h3>{{ trace.name }}</h3>
     
     <p>Créé le {{ trace.created_at.strftime('%Y-%m-%d')}}</p>
     
     <p>{{ trace.comment }}</p><br>
     
-        <div class="btn-group" role="toolbar">
-            <a href="{{ url_for('delete_trace', trace_id = trace.id) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
-            <a href="#" class="btn btn-default disabled"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-            <a href="#" class="btn btn-default disabled"><span class="glyphicon glyphicon-download-alt"></span> Download GPX</a>
-        </div>
+    <div class="btn-group" role="toolbar">
+        <a href="{{ url_for('delete_trace', trace_id = trace.id) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+        <a href="#" class="btn btn-default disabled"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+        <a href="{{ url_for('download', trace_id = trace.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> Download GPX</a>
     </div>
 </div>
 
@@ -24,7 +23,8 @@
 <script type="text/javascript">
     
     $.getJSON("/api/traces/{{ trace.id }}", function(data) {
-        var geojson = L.geoJson(data).addTo(map)
+        var geojson = L.geoJson(data).addTo(map);
+        map.fitBounds(geojson.getBounds());
         });
 
 </script>
