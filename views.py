@@ -37,7 +37,6 @@ def api_traces():
 @app.route('/traces/new/', methods=['POST','GET'])
 def new_trace():
     if request.method == 'POST':
-        user_geom = None
         db.session.add(Traces(request.form['name'],
                               request.form['comment'],
                               request.form['type'],
@@ -65,7 +64,6 @@ def new_trace_gpx():
         if routes:
             for route in routes:
                 for point in route.points:
-                    lgt = float(point.longitude)
                     lat = float(point.latitude)
                     if lat > 40.0:
                         wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
@@ -74,7 +72,6 @@ def new_trace_gpx():
             for track in tracks:
                 for segment in track.segments:
                     for point in segment.points:
-                        lgt = float(point.longitude)
                         lat = float(point.latitude)
                         if lat > 40.0:
                             wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
