@@ -61,40 +61,56 @@ def new_trace_gpx():
     Create a new trace from a GPX file
     """
     if request.method == 'POST':
-        print request.files
+        
         if 'gpx_file' not in request.files:
             flash('No file supplied...', 'error')
             return redirect(request.url)
+
         gpx_file = request.files['gpx_file']
+        
         if gpx_file and allowed_file(gpx_file.filename):
             filename = secure_filename(gpx_file.filename)
             gpx_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             loaded_gpx = open(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             gpx = gpxpy.parse(loaded_gpx)
+        
         routes = gpx.routes
         tracks = gpx.tracks
         wkt = 'SRID=4326;LINESTRING('
+        
         if routes:
+        
             for route in routes:
                 for point in route.points:
+        
                     lat = float(point.latitude)
+        
                     if lat > 40.0:
                         wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
+            
             wkt = wkt[:-1] + ')'
+        
         elif tracks:
+        
             for track in tracks:
                 for segment in track.segments:
                     for point in segment.points:
+        
                         lat = float(point.latitude)
+        
                         if lat > 40.0:
                             wkt = wkt + "{0} {1},".format(str(point.longitude), str(point.latitude))
+        
             wkt = wkt[:-1] + ')'
+        
         db.session.add(Traces(request.form['name'],
                             request.form['comment'],
                             request.form['type'],
                             geom = wkt))
         db.session.commit()
+    
         return redirect(url_for('home'))
+    
     return render_template('new_gpx_trace.html', types_available=app.config['TRACKS_TYPES'],home_button=True)        
 
 @app.route('/traces/delete/<trace_id>')
@@ -148,5 +164,6 @@ def download(trace_id):
 	
 
 if __name__ == '__main__':
+    
     db.init_app(app)
     app.run(debug=True)

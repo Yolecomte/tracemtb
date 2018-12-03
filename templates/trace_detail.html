@@ -4,11 +4,15 @@
 {}
 <div class="trace-detail col-md-4">
     <h3>{{ trace.name }}</h3>
-    
+    <p>Type : {{ trace.type }}</p>
     <p>Créé le {{ trace.created_at.strftime('%Y-%m-%d')}}</p>
     
-    <p>{{ trace.comment }}</p><br>
-    
+    {% if trace.comment %}
+        <p>{{ trace.comment }}</p><br>
+    {% else %}
+        <p>No comment for this trace...</p>
+    {% endif %}
+
     <div class="btn-group" role="toolbar">
         <a href="{{ url_for('delete_trace', trace_id = trace.id) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
         <a href="#" class="btn btn-default disabled"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
