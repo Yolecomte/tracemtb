@@ -1,0 +1,11 @@
+"""local non shared configuration"""
+
+POSTGRES = {
+    'user': 'user',
+    'password': 'pass',
+    'database': 'traces',
+    'host': 'localhost',
+    'port': '5432',
+}
+
+SECRET_KEY = 'very-long-secret-key-8dc!df'

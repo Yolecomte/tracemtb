@@ -4,14 +4,14 @@ header{
 }
 
 html, body, .container-fluid{
-    height: calc(100% - 75px);
+    height: calc(100% - 85px);
     margin: 0;   
 }
 
 .container-fluid{
     display: table;
     width: 100% !important;
-    padding: 0 !important; /*set left/right padding according to needs*/
+    padding: 10px !important; /*set left/right padding according to needs*/
     box-sizing: border-box;
 }
 
@@ -46,4 +46,12 @@ html, body, .container-fluid{
 .flashes .success{
     background-color: #DBF4DA;
     color:darkgreen;
+}
+
+footer{
+    text-align: center;
+    display: inline;
+    margin-top: 10px;
+    padding:10px;
+    background-image: linear-gradient(lightgray,gray);
 }

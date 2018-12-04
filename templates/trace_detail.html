@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{}
 <div class="trace-detail col-md-4">
     <h3>{{ trace.name }}</h3>
     <p>Type : {{ trace.type }}</p>
@@ -20,7 +19,7 @@
     </div>
 </div>
 
-<div id="map" class="col-md-7"></div>
+<div id="map" class="col-md-8"></div>
 
     {% include 'map.html' %}
 

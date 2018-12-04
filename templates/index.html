@@ -13,7 +13,7 @@
         <hr>
            
         {% for trace in traces.items %}
-           <a href="{{ url_for('trace', trace_id = trace.id) }}">{{trace.name}}</a> <i style="color:grey">(Créé le {{trace.created_at.strftime('%Y-%m-%d')}})</i><br />
+           <a href="{{ url_for('trace', trace_id = trace.id) }}" class="track_link">{{trace.name}}</a> <i style="color:grey">(Créé le {{trace.created_at.strftime('%Y-%m-%d')}})</i><br />
         {% endfor %}
 
         <p>-</p>
@@ -48,16 +48,19 @@
     {% endif %}
 </div>
     
-<div id="map" class="col-md-7"></div>
+<div id="map" class="col-md-8"></div>
 
     {% include 'map.html' %}
     <script type="text/javascript">
+
         $.getJSON("/api/traces/", function(data) {
             var geojson = L.geoJson(data,{
+            
                 onEachFeature: function(feature, layer) {
                     tmp = "<p>"+feature.properties.name+"</p>"
                     layer.bindPopup(tmp);
                     }
+                
                 }).addTo(map)
                 map.fitBounds(geojson.getBounds());
             });

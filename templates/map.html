@@ -3,9 +3,21 @@
     
     var map = L.map('map',{zoom:15}).setView([48.173,6.447], 12);
 
-    var layer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    var osmlayer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         });
     
-    map.addLayer(layer);
+    var aeriallayer = L.tileLayer('https://proxy-ign.openstreetmap.fr/94GjiyqD/bdortho/{z}/{x}/{y}.jpg', {
+        attribution: '&copy; <span>IGN BD ORTHO</span>'
+    });
+    map.addLayer(aeriallayer);
+    map.addLayer(osmlayer);
+
+    var basemap = {
+        'OSM': osmlayer,
+        'Aerial' : aeriallayer
+    }
+
+    L.control.layers(basemap).addTo(map);
+
 </script>
