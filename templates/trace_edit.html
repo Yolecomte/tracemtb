@@ -17,10 +17,10 @@
         </select>
     
         <p>Commentaire<br>
-        <textarea name="comment" form="trace_form" value="{{ trace.comment }}"></textarea><br>
+        <textarea name="comment" form="trace_form">{{ trace.comment }}</textarea><br>
         <br>
     
-        <textarea name="wkt_geom" form="trace_form" style="display:none;"></textarea>
+        <textarea name="wkt_geom" form="trace_form" style="display:none;">{{trace.geom}}</textarea>
 
         <p><input type="submit" value="Ajouter" class="btn btn-success">
     </form>

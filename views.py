@@ -31,7 +31,7 @@ def home(page=1):
     Retrieve all the traces and paginate them
     """
     per_page = app.config['PER_PAGE']
-    traces = Traces.query.paginate(page, per_page, error_out=False)
+    traces = Traces.query.order_by(Traces.created_at.desc()).paginate(page, per_page, error_out=False)
     return render_template('index.html', 
                            traces=traces, 
                            home_button=False)
