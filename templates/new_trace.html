@@ -18,7 +18,7 @@
         <textarea name="comment" form="trace_form"></textarea><br>
         <br>
     
-        <textarea name="wkt_geom" form="trace_form"></textarea>
+        <textarea name="wkt_geom" form="trace_form" style="display:none;"></textarea>
 
         <p><input type="submit" value="Ajouter" class="btn btn-success">
     </form>
@@ -39,17 +39,23 @@
             circlemarker: false
         },
         edit: {
-            featureGroup: drawnItems, layer
+            featureGroup: drawnItems
         }
     });
     map.addControl(drawControl);
 
     map.on(L.Draw.Event.CREATED, function (e) {
         var layer = e.layer;
+        layer.editing.enable();
         map.addLayer(layer);
         var geojson_layer = layer.toGeoJSON();
         var wkt = Terraformer.WKT.convert(geojson_layer.geometry);
-        $('textarea[name=wkt_geom]').html(wkt)
+        $('textarea[name=wkt_geom]').html(wkt);
+        layer.on('edit', function(){
+            var geojson_layer = layer.toGeoJSON();
+            var wkt = Terraformer.WKT.convert(geojson_layer.geometry);
+            $('textarea[name=wkt_geom]').html(wkt);
+        });
     })
 
 </script>

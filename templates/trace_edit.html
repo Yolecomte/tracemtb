@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="formulaire col-md-4">
+    <h3>Edit this trace</h3>
+    <p>{{ trace.name }}</p>
+    <form method="post" id="trace_form">
+        <input type="hidden" name="id" value="{{ trace.id }}"><br>
+        <p>Nom<br>
+        <input type="text" name="name" value="{{ trace.name}}"><br>
+
+        <p>type<br>
+        <select name="type" value="{{ trace.type }}"> 
+            {% for elem in types_available %}
+                <option value = "{{elem}}">{{ elem }}</option>"
+            {% endfor %}
+        </select>
+    
+        <p>Commentaire<br>
+        <textarea name="comment" form="trace_form" value="{{ trace.comment }}"></textarea><br>
+        <br>
+    
+        <textarea name="wkt_geom" form="trace_form" style="display:none;"></textarea>
+
+        <p><input type="submit" value="Ajouter" class="btn btn-success">
+    </form>
+</div>
+<div id=map class="col-md-7"></div>
+
+{% include 'map.html' %}
+
+<script>
+   /* var drawControl = new L.Control.Draw({
+        draw: {
+            polygon: false,
+            polyline: false,
+            marker: false,
+            rectangle: false,
+            circle: false,
+            circlemarker: false
+        },
+        edit: {
+            featureGroup: layer
+        }
+    });
+    map.addControl(drawControl); */
+
+    $.getJSON("/api/traces/{{ trace.id }}", function(data) {
+        var geojson = L.geoJson(data, {
+            onEachFeature: function(feature, layer) {
+                layer.on('click', function (e) {
+                    e.target.editing.enable();
+                    e.target.on('edit', function(e) {
+                        console.log(e);
+                        var geojson_layer = layer.toGeoJSON();
+                        var wkt = Terraformer.WKT.convert(geojson_layer.geometry);
+                        $('textarea[name=wkt_geom]').html(wkt)
+                            });
+                        });
+                    }}).addTo(map);
+            map.fitBounds(geojson.getBounds());
+            });
+
+        
+</script>
+{% endblock %}

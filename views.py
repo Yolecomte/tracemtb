@@ -22,6 +22,7 @@ conn = DB_GeoJson(**app.config['POSTGRES'])
 @app.route('/')
 def index():
     return redirect(url_for('home'))
+
     
 @app.route('/traces/page/')
 @app.route('/traces/page/<int:page>')
@@ -31,7 +32,10 @@ def home(page=1):
     """
     per_page = app.config['PER_PAGE']
     traces = Traces.query.paginate(page, per_page, error_out=False)
-    return render_template('index.html', traces=traces, home_button=False)
+    return render_template('index.html', 
+                           traces=traces, 
+                           home_button=False)
+
 
 @app.route('/api/traces/')
 def api_traces():
@@ -39,7 +43,11 @@ def api_traces():
     Retrieve all geom traces in db to show on the map 
     """
     traces = conn.get_table_as_geojson(Traces.__tablename__)
-    return geojson.dumps(traces, indent=4, sort_keys=True, default=str)
+    return geojson.dumps(traces, 
+                         indent=4, 
+                         sort_keys=True, 
+                         default=str)
+
 
 @app.route('/traces/new/', methods=['POST','GET'])
 def new_trace():
@@ -53,7 +61,9 @@ def new_trace():
                               geom = 'SRID=4326;'+request.form['wkt_geom']))
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('new_trace.html', types_available=app.config['TRACKS_TYPES'], home_button=True)
+    return render_template('new_trace.html', 
+                           types_available=app.config['TRACKS_TYPES'], 
+                           home_button=True)
 
 @app.route('/traces/new/gpx/', methods=['POST','GET'])
 def new_trace_gpx():
@@ -111,7 +121,10 @@ def new_trace_gpx():
     
         return redirect(url_for('home'))
     
-    return render_template('new_gpx_trace.html', types_available=app.config['TRACKS_TYPES'],home_button=True)        
+    return render_template('new_gpx_trace.html', 
+                           types_available=app.config['TRACKS_TYPES'], 
+                           home_button=True)
+
 
 @app.route('/traces/delete/<trace_id>')
 def delete_trace(trace_id):
@@ -129,7 +142,10 @@ def trace(trace_id):
     Retrieve single trace datas 
     """
     trace = Traces.query.get(trace_id)
-    return render_template('trace_detail.html',trace=trace, home_button=True)
+    return render_template('trace_detail.html',
+                           trace=trace, 
+                           home_button=True)
+
 
 @app.route('/api/traces/<trace_id>')
 def api_trace(trace_id):
@@ -137,7 +153,31 @@ def api_trace(trace_id):
     Retrieve the geometry of a single trace to show it on the map
     """
     trace = conn.get_single_data_as_geojson(Traces.__tablename__, trace_id)
-    return geojson.dumps(trace,indent=4, sort_keys=True, default=str)
+    return geojson.dumps(trace,
+                         indent=4, 
+                         sort_keys=True, 
+                         default=str)
+
+
+@app.route('/traces/<trace_id>/edit', methods=['GET', 'POST'])
+def edit_trace(trace_id):
+    """
+    Edit an existing trace
+    """
+    if request.method == 'POST':
+        db.session.query(Traces).filter(Traces.id == trace_id).update(
+                                {'name' : request.form['name'],
+                                 'comment': request.form['comment'],
+                                 'type' : request.form['type'],
+                                 'geom' : 'SRID=4326;'+request.form['wkt_geom']})
+        db.session.commit()
+        return redirect(url_for('trace', trace_id=trace_id))
+    trace = Traces.query.get(trace_id) 
+    return render_template('trace_edit.html',
+                            trace=trace, 
+                            types_available=app.config['TRACKS_TYPES'], 
+                            home_button=True)
+
 
 @app.route('/api/traces/download/<trace_id>')
 def download(trace_id):
