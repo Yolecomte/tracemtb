@@ -215,7 +215,6 @@ def download(trace_id):
     gpx_track.segments.append(gpx_segment)
 
     for coord in coords:
-        print coord[0]
         gpx_segment.points.append(_gpx.GPXTrackPoint(coord[0], coord[1], elevation=0))
     
     return Response(gpx.to_xml(), mimetype="text/plain", headers={"Content-Disposition":"attachment;filename=track.gpx"})
