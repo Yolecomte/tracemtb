@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="trace-detail col-md-4">
+    {% include 'flash.html' %}
     <h3>{{ trace.name }}</h3>
     <p>Type : {{ trace.type }}</p>
     <p>Créé le {{ trace.created_at.strftime('%Y-%m-%d')}}</p>

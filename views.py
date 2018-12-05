@@ -60,7 +60,10 @@ def new_trace():
                               request.form['type'],
                               geom = 'SRID=4326;'+request.form['wkt_geom']))
         db.session.commit()
+        
+        flash("Your trace has been successfully created, Thank's", 'success')
         return redirect(url_for('home'))
+
     return render_template('new_trace.html', 
                            types_available=app.config['TRACKS_TYPES'], 
                            home_button=True)
@@ -71,12 +74,25 @@ def new_trace_gpx():
     Create a new trace from a GPX file
     """
     if request.method == 'POST':
-        
+        error = 0
         if 'gpx_file' not in request.files:
+            error += 1
             flash('No file supplied...', 'error')
-            return redirect(request.url)
+        else:
+            gpx_file = request.files['gpx_file']
+        
+        if request.form['name'] in (None, '', ' ',):
+            error += 1
+            flash('Please give a name to your trace!', 'error')      
+        try:
+            if not allowed_file(gpx_file.filename):
+                error += 1
+                flash('Your file is not a valid GPX file', 'error')
+        except:
+            pass
 
-        gpx_file = request.files['gpx_file']
+        if error:
+            return redirect(request.url)
         
         if gpx_file and allowed_file(gpx_file.filename):
             filename = secure_filename(gpx_file.filename)
@@ -118,6 +134,7 @@ def new_trace_gpx():
                             request.form['type'],
                             geom = wkt))
         db.session.commit()
+        flash('Your trace has been successfully loaded!', 'success')
     
         return redirect(url_for('home'))
     
@@ -171,6 +188,7 @@ def edit_trace(trace_id):
                                  'type' : request.form['type'],
                                  'geom' : 'SRID=4326;'+request.form['wkt_geom']})
         db.session.commit()
+        flash('Your trace has been succesfully updated!', 'success')
         return redirect(url_for('trace', trace_id=trace_id))
     trace = Traces.query.get(trace_id) 
     return render_template('trace_edit.html',

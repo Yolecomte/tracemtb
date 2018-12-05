@@ -38,14 +38,23 @@ html, body, .container-fluid{
     height: 100%;
 }
 
+.flashes *{
+    padding: 5px;
+    border-radius: 2px;
+    border-width: 1px;
+    border-style: solid;
+}
+
 .flashes .error{
     background-color: lightpink;
     color:darkred;
+    border-color: darkred;
 }
 
 .flashes .success{
     background-color: #DBF4DA;
     color:darkgreen;
+    border-color: darkgreen;
 }
 
 footer{

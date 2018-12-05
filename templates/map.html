@@ -10,13 +10,14 @@
     var aeriallayer = L.tileLayer('https://proxy-ign.openstreetmap.fr/94GjiyqD/bdortho/{z}/{x}/{y}.jpg', {
         attribution: '&copy; <span>IGN BD ORTHO</span>'
     });
-    map.addLayer(aeriallayer);
+
     map.addLayer(osmlayer);
+    map.addLayer(aeriallayer);
 
     var basemap = {
         'OSM': osmlayer,
-        'Aerial' : aeriallayer
-    }
+        'Aerial' : aeriallayer 
+    };
 
     L.control.layers(basemap).addTo(map);
 
