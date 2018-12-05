@@ -13,13 +13,11 @@ Current fonctionnalities:
   - Visualize all traces 
   - Visualize trace details
   - Draw a trace from scratch
-  
+  - Availabitlity to edit existing trace
+  - Download GPX  
+
 # TODO
 
-  - Availabitlity to edit existing trace
-  - Download GPX
   - Browse in current traces
   - Add a user level?
   - More interactivity between map and list of traces
-
-
