@@ -9,7 +9,7 @@ Stack:
 Current fonctionnalities:
 
   - Upload GPX files
-  - Store everyhing in Postgres/Postgis
+  - Store everything in Postgres/Postgis
   - Visualize all traces 
   - Visualize trace details
   - Draw a trace from scratch
