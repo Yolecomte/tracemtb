@@ -17,7 +17,9 @@ Current fonctionnalities:
   - Download GPX  
 
 # TODO
-
-  - Browse in current traces
-  - Add a user level?
-  - More interactivity between map and list of traces
+  - JS STUFF
+    - Browse in current traces
+    - More interactivity between map and list of traces
+    - Symbology
+    - help for new user
+  -DOC
