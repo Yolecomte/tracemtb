@@ -1,7 +1,7 @@
-from flask import Flask, flash, request, render_template, redirect, url_for, Response
-from werkzeug.utils import secure_filename
-from models import db, Traces
-
+from flask import Flask, flash, request, render_template, redirect, url_for, Response, Blueprint
+from flask import current_app as app
+from traceVtt import db
+from traceVtt.models import Traces
 import os
 
 from utils import DB_GeoJson
@@ -9,23 +9,22 @@ import geojson
 import gpxpy
 from gpxpy import gpx as _gpx
 
+main = Blueprint('main',__name__, template_folder='templates', static_folder='static')
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+def conn():
+    return DB_GeoJson(**app.config['POSTGRES'])
 
-app = Flask(__name__)
-app.config.from_object('config')
-conn = DB_GeoJson(**app.config['POSTGRES'])
-
-@app.route('/')
+@main.route('/')
 def index():
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
 
     
-@app.route('/traces/page/')
-@app.route('/traces/page/<int:page>')
+@main.route('/traces/page/')
+@main.route('/traces/page/<int:page>')
 def home(page=1):
     """
     Retrieve all the traces and paginate them
@@ -37,19 +36,19 @@ def home(page=1):
                            home_button=False)
 
 
-@app.route('/api/traces/')
+@main.route('/api/traces/')
 def api_traces():
     """
     Retrieve all geom traces in db to show on the map 
     """
-    traces = conn.get_table_as_geojson(Traces.__tablename__)
+    traces = conn().get_table_as_geojson(Traces.__tablename__)
     return geojson.dumps(traces, 
                          indent=4, 
                          sort_keys=True, 
                          default=str)
 
 
-@app.route('/traces/new/', methods=['POST','GET'])
+@main.route('/traces/new/', methods=['POST','GET'])
 def new_trace():
     """
     Create a new trace from a user drawing
@@ -62,13 +61,13 @@ def new_trace():
         db.session.commit()
         
         flash("Your trace has been successfully created, Thank's", 'success')
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
 
     return render_template('new_trace.html', 
                            types_available=app.config['TRACKS_TYPES'], 
                            home_button=True)
 
-@app.route('/traces/new/gpx/', methods=['POST','GET'])
+@main.route('/traces/new/gpx/', methods=['POST','GET'])
 def new_trace_gpx():
     """
     Create a new trace from a GPX file
@@ -136,14 +135,14 @@ def new_trace_gpx():
         db.session.commit()
         flash('Your trace has been successfully loaded!', 'success')
     
-        return redirect(url_for('home'))
+        return redirect(url_for('main.home'))
     
     return render_template('new_gpx_trace.html', 
                            types_available=app.config['TRACKS_TYPES'], 
                            home_button=True)
 
 
-@app.route('/traces/delete/<trace_id>')
+@main.route('/traces/delete/<trace_id>')
 def delete_trace(trace_id):
     """
     Delete a trace
@@ -151,9 +150,9 @@ def delete_trace(trace_id):
     db.session.delete(Traces.query.get(trace_id))
     db.session.commit()
     flash('The trace has been succesfully deleted!', 'success')
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
 
-@app.route('/traces/<trace_id>')
+@main.route('/traces/<trace_id>')
 def trace(trace_id):
     """
     Retrieve single trace datas 
@@ -164,19 +163,19 @@ def trace(trace_id):
                            home_button=True)
 
 
-@app.route('/api/traces/<trace_id>')
+@main.route('/api/traces/<trace_id>')
 def api_trace(trace_id):
     """
     Retrieve the geometry of a single trace to show it on the map
     """
-    trace = conn.get_single_data_as_geojson(Traces.__tablename__, trace_id)
+    trace = conn().get_single_data_as_geojson(Traces.__tablename__, trace_id)
     return geojson.dumps(trace,
                          indent=4, 
                          sort_keys=True, 
                          default=str)
 
 
-@app.route('/traces/<trace_id>/edit', methods=['GET', 'POST'])
+@main.route('/traces/<trace_id>/edit', methods=['GET', 'POST'])
 def edit_trace(trace_id):
     """
     Edit an existing trace
@@ -189,7 +188,7 @@ def edit_trace(trace_id):
                                  'geom' : 'SRID=4326;'+request.form['wkt_geom']})
         db.session.commit()
         flash('Your trace has been succesfully updated!', 'success')
-        return redirect(url_for('trace', trace_id=trace_id))
+        return redirect(url_for('main.trace', trace_id=trace_id))
     trace = Traces.query.get(trace_id) 
     return render_template('trace_edit.html',
                             trace=trace, 
@@ -197,12 +196,12 @@ def edit_trace(trace_id):
                             home_button=True)
 
 
-@app.route('/api/traces/download/<trace_id>')
+@main.route('/api/traces/download/<trace_id>')
 def download(trace_id):
     """
     Create a GPX file and expose it to the user for downloading
     """
-    trace = conn.get_single_data_as_geojson(Traces.__tablename__, trace_id)
+    trace = conn().get_single_data_as_geojson(Traces.__tablename__, trace_id)
 
     gpx = _gpx.GPX()
         
@@ -218,9 +217,3 @@ def download(trace_id):
         gpx_segment.points.append(_gpx.GPXTrackPoint(coord[0], coord[1], elevation=0))
     
     return Response(gpx.to_xml(), mimetype="text/plain", headers={"Content-Disposition":"attachment;filename=track.gpx"})
-	
-
-if __name__ == '__main__':
-    
-    db.init_app(app)
-    app.run(debug=True)

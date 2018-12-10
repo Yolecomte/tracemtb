@@ -1,9 +1,11 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask import current_app as app
+
 from sqlalchemy.sql import func
 from geoalchemy2 import Geometry
 import datetime
+from . import db
 
-db = SQLAlchemy()
+
 
 class BaseModel(db.Model):
     """
@@ -28,4 +30,18 @@ class Traces(BaseModel):
         self.comment = comment
         self.geom = geom
         self.type = type
+    
+
+class User(BaseModel):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True)
+    pseudo = db.Column(db.String(200), nullable=False)
+    mail = db.Column(db.String)
+    password = db.Column(db.String, nullable=False)
+
+    def __init__(self, pseudo, mail, password):
+        self.pseudo = pseudo
+        self.mail = mail
+        self.password = password
 

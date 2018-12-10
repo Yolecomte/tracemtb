@@ -1,18 +1,19 @@
-import os
-from local import *
 
-SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:\
-%(password)s@%(host)s:%(port)s/%(database)s' % POSTGRES
+class BaseConfig(object):
+    DEBUG = True
+    TESTING = False
+    
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    UPLOAD_FOLDER = 'media/'    
+    # Tracks types
+    TRACKS_TYPES = ['enduro', 'XC', 'DH']
+    # Allowed extensions to load traces (only gpx supported)
+    ALLOWED_EXTENSIONS = ['gpx',]
+    # Number of traces showed in on page in index.html
+    PER_PAGE = 5
 
-SQLALCHEMY_TRACK_MODIFICATIONS = False 
 
-UPLOAD_FOLDER = 'media/'
-
-# Tracks types
-TRACKS_TYPES = ['enduro', 'XC', 'DH']
-
-# Allowed extensions to load traces (only gpx supported)
-ALLOWED_EXTENSIONS = ['gpx',]
-
-# Number of traces showed in on page in index.html
-PER_PAGE = 5
+def configure_app(app):
+    app.config.from_object('traceVtt.config.BaseConfig')
+    app.config.from_pyfile('local.cfg', silent=True)
