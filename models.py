@@ -3,9 +3,7 @@ from flask import current_app as app
 from sqlalchemy.sql import func
 from geoalchemy2 import Geometry
 import datetime
-from . import db
-
-
+from traceVtt import db
 
 class BaseModel(db.Model):
     """
@@ -32,8 +30,8 @@ class Traces(BaseModel):
         self.type = type
     
 
-class User(BaseModel):
-    __tablename__ = 'user'
+class Users(BaseModel):
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     pseudo = db.Column(db.String(200), nullable=False)

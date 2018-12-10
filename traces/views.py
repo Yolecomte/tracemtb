@@ -9,7 +9,7 @@ import geojson
 import gpxpy
 from gpxpy import gpx as _gpx
 
-main = Blueprint('main',__name__, template_folder='templates', static_folder='static')
+main = Blueprint('main',__name__, static_folder='static')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -31,7 +31,7 @@ def home(page=1):
     """
     per_page = app.config['PER_PAGE']
     traces = Traces.query.order_by(Traces.created_at.desc()).paginate(page, per_page, error_out=False)
-    return render_template('index.html', 
+    return render_template('traces/index.html', 
                            traces=traces, 
                            home_button=False)
 
@@ -63,7 +63,7 @@ def new_trace():
         flash("Your trace has been successfully created, Thank's", 'success')
         return redirect(url_for('main.home'))
 
-    return render_template('new_trace.html', 
+    return render_template('traces/new_trace.html', 
                            types_available=app.config['TRACKS_TYPES'], 
                            home_button=True)
 
@@ -137,7 +137,7 @@ def new_trace_gpx():
     
         return redirect(url_for('main.home'))
     
-    return render_template('new_gpx_trace.html', 
+    return render_template('traces/new_gpx_trace.html', 
                            types_available=app.config['TRACKS_TYPES'], 
                            home_button=True)
 
@@ -158,7 +158,7 @@ def trace(trace_id):
     Retrieve single trace datas 
     """
     trace = Traces.query.get(trace_id)
-    return render_template('trace_detail.html',
+    return render_template('traces/trace_detail.html',
                            trace=trace, 
                            home_button=True)
 
@@ -190,7 +190,7 @@ def edit_trace(trace_id):
         flash('Your trace has been succesfully updated!', 'success')
         return redirect(url_for('main.trace', trace_id=trace_id))
     trace = Traces.query.get(trace_id) 
-    return render_template('trace_edit.html',
+    return render_template('traces/trace_edit.html',
                             trace=trace, 
                             types_available=app.config['TRACKS_TYPES'], 
                             home_button=True)

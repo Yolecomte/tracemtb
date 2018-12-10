@@ -6,15 +6,22 @@ from traceVtt.traces.utils import get_instance_folder_path
 from traceVtt.config import configure_app
 
 
-
 app = Flask(__name__,
             instance_path=get_instance_folder_path(),
             instance_relative_config=True)
 configure_app(app)
 
 db = SQLAlchemy(app)
+
 migrate = Migrate(app, db)
 
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
+
+
+from traceVtt import models 
 
 from traceVtt.traces.views import main
 app.register_blueprint(main, url_prefix='/main')
+from traceVtt.auth.views import auth
+app.register_blueprint(auth, url_prefix='/auth')
