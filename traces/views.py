@@ -1,5 +1,6 @@
 from flask import Flask, flash, request, render_template, redirect, url_for, Response, Blueprint
 from flask import current_app as app
+from werkzeug.utils import secure_filename
 from traceVtt import db
 from traceVtt.models import Traces
 import os
@@ -9,14 +10,17 @@ import geojson
 import gpxpy
 from gpxpy import gpx as _gpx
 
-main = Blueprint('main',__name__, static_folder='static')
+main = Blueprint('main', __name__, static_folder='static')
+
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+
 def conn():
     return DB_GeoJson(**app.config['POSTGRES'])
+
 
 @main.route('/')
 def index():

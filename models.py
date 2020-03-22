@@ -43,3 +43,14 @@ class Users(BaseModel):
         self.mail = mail
         self.password = password
 
+    def is_active(self):
+        return True
+
+    def get_id(self):
+        return self.mail
+
+    def is_authenticated(self):
+        return True
+
+    def is_anonymous(self):
+        return False

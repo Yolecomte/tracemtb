@@ -1,3 +1,6 @@
+import os
+
+base_dir = os.path.dirname(os.path.realpath(__file__)) 
 
 class BaseConfig(object):
     DEBUG = True
@@ -5,7 +8,7 @@ class BaseConfig(object):
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
-    UPLOAD_FOLDER = 'media/'    
+    UPLOAD_FOLDER = os.path.join(base_dir,'media/')    
     # Tracks types
     TRACKS_TYPES = ['enduro', 'XC', 'DH']
     # Allowed extensions to load traces (only gpx supported)

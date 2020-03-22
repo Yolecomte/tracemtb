@@ -23,5 +23,3 @@ from traceVtt import models
 
 from traceVtt.traces.views import main
 app.register_blueprint(main, url_prefix='/main')
-from traceVtt.auth.views import auth
-app.register_blueprint(auth, url_prefix='/auth')
