@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
-{% include 'flash.html' %}
+{% include 'buttons.html' %}
 
 <div class="trace-detail col-md-4">
+    {% include 'flash.html' %}
     {% if traces %}
         <div class="list-title">
         <h3>Current Traces </h3><p>({{traces.total}} traces)</p>
@@ -13,28 +12,28 @@
         <hr>
            
         {% for trace in traces.items %}
-           <a href="{{ url_for('main.trace', trace_id = trace.id) }}" class="track_link">{{trace.name}}</a> <i style="color:grey">(Créé le {{trace.created_at.strftime('%Y-%m-%d')}})</i><br />
+           <a href="{{ url_for('traces.trace', trace_id = trace.id) }}" class="track_link">{{trace.name}}</a> <i style="color:grey">(Créé le {{trace.created_at.strftime('%Y-%m-%d')}})</i><br />
         {% endfor %}
 
         <p>-</p>
             
         <div class="btn-group" role="toolbar">
         {% if traces.has_prev %}
-            <a href="{{ url_for('main.home', page=traces.prev_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>
+            <a href="{{ url_for('traces.home', page=traces.prev_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-left"></span></a>
         {% else %}
             <a href="#" class="btn btn-default btn-xs disabled"><span class="glyphicon glyphicon-menu-left"></span></a>
         {% endif %}
         {% if traces and traces.pages > 1 %}
             {% for page in traces.iter_pages() %}
                 {% if traces.page == page %}
-                    <a href="{{ url_for('main.home', page=page)}}" class="btn btn-primary btn-xs">{{ page }}</a>
+                    <a href="{{ url_for('traces.home', page=page)}}" class="btn btn-primary btn-xs">{{ page }}</a>
                 {% else %}
-                    <a href="{{ url_for('main.home', page=page)}}" class="btn btn-default btn-xs">{{ page }}</a>
+                    <a href="{{ url_for('traces.home', page=page)}}" class="btn btn-default btn-xs">{{ page }}</a>
                 {% endif %}
             {% endfor %}
         {% endif %} 
         {% if traces.has_next %}
-            <a href="{{ url_for('main.home', page=traces.next_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-right"></span></a>
+            <a href="{{ url_for('traces.home', page=traces.next_num)}}" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-menu-right"></span></a>
         {% else %}
             <a href="#" class="btn btn-default btn-xs disabled"><span class="glyphicon glyphicon-menu-right"></span></a>
         {% endif %}
@@ -53,7 +52,7 @@
     {% include 'map.html' %}
     <script type="text/javascript">
 
-        $.getJSON("/main/api/traces/", function(data) {
+        $.getJSON("/traces/api/traces/", function(data) {
             var geojson = L.geoJson(data,{
             
                 onEachFeature: function(feature, layer) {

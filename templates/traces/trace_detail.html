@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% include 'buttons.html' %}
 <div class="trace-detail col-md-4">
     {% include 'flash.html' %}
     <h3>{{ trace.name }}</h3>
@@ -14,9 +15,9 @@
     {% endif %}
 
     <div class="btn-group" role="toolbar">
-        <a href="{{ url_for('main.delete_trace', trace_id = trace.id) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
-        <a href="{{ url_for('main.edit_trace', trace_id = trace.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-        <a href="{{ url_for('main.download', trace_id = trace.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> Download GPX</a>
+        <a href="{{ url_for('traces.delete_trace', trace_id = trace.id) }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+        <a href="{{ url_for('traces.edit_trace', trace_id = trace.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+        <a href="{{ url_for('traces.download', trace_id = trace.id) }}" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> Download GPX</a>
     </div>
 </div>
 
@@ -26,7 +27,7 @@
 
 <script type="text/javascript">
     
-    $.getJSON("/main/api/traces/{{ trace.id }}", function(data) {
+    $.getJSON("/traces/api/traces/{{ trace.id }}", function(data) {
         var geojson = L.geoJson(data).addTo(map);
         map.fitBounds(geojson.getBounds());
         });

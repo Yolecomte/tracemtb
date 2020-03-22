@@ -21,5 +21,8 @@ manager.add_command('db', MigrateCommand)
 
 from traceVtt import models 
 
-from traceVtt.traces.views import main
-app.register_blueprint(main, url_prefix='/main')
+from traceVtt.base.views import base
+app.register_blueprint(base, url_prefix='')
+from traceVtt.traces.views import traces
+app.register_blueprint(traces, url_prefix='/traces')
+

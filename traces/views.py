@@ -10,7 +10,7 @@ import geojson
 import gpxpy
 from gpxpy import gpx as _gpx
 
-main = Blueprint('main', __name__, static_folder='static')
+traces = Blueprint('traces', __name__, static_folder='static')
 
 
 def allowed_file(filename):
@@ -22,13 +22,13 @@ def conn():
     return DB_GeoJson(**app.config['POSTGRES'])
 
 
-@main.route('/')
+@traces.route('/')
 def index():
     return redirect(url_for('main.home'))
 
     
-@main.route('/traces/page/')
-@main.route('/traces/page/<int:page>')
+@traces.route('/page/')
+@traces.route('/page/<int:page>')
 def home(page=1):
     """
     Retrieve all the traces and paginate them
@@ -40,7 +40,7 @@ def home(page=1):
                            home_button=False)
 
 
-@main.route('/api/traces/')
+@traces.route('/api/traces/')
 def api_traces():
     """
     Retrieve all geom traces in db to show on the map 
@@ -52,7 +52,7 @@ def api_traces():
                          default=str)
 
 
-@main.route('/traces/new/', methods=['POST', 'GET'])
+@traces.route('/new/', methods=['POST', 'GET'])
 def new_trace():
     """
     Create a new trace from a user drawing
@@ -72,7 +72,7 @@ def new_trace():
                            home_button=True)
 
 
-@main.route('/traces/new/gpx/', methods=['POST', 'GET'])
+@traces.route('/new/gpx/', methods=['POST', 'GET'])
 def new_trace_gpx():
     """
     Create a new trace from a GPX file
@@ -148,7 +148,7 @@ def new_trace_gpx():
                            home_button=True)
 
 
-@main.route('/traces/delete/<trace_id>')
+@traces.route('/delete/<trace_id>')
 def delete_trace(trace_id):
     """
     Delete a trace
@@ -159,7 +159,7 @@ def delete_trace(trace_id):
     return redirect(url_for('main.home'))
 
 
-@main.route('/traces/<trace_id>')
+@traces.route('/<trace_id>')
 def trace(trace_id):
     """
     Retrieve single trace datas 
@@ -170,7 +170,7 @@ def trace(trace_id):
                            home_button=True)
 
 
-@main.route('/api/traces/<trace_id>')
+@traces.route('/api/traces/<trace_id>')
 def api_trace(trace_id):
     """
     Retrieve the geometry of a single trace to show it on the map
@@ -182,7 +182,7 @@ def api_trace(trace_id):
                          default=str)
 
 
-@main.route('/traces/<trace_id>/edit', methods=['GET', 'POST'])
+@traces.route('/<trace_id>/edit', methods=['GET', 'POST'])
 def edit_trace(trace_id):
     """
     Edit an existing trace
@@ -203,7 +203,7 @@ def edit_trace(trace_id):
                            home_button=True)
 
 
-@main.route('/api/traces/download/<trace_id>')
+@traces.route('/api/traces/download/<trace_id>')
 def download(trace_id):
     """
     Create a GPX file and expose it to the user for downloading

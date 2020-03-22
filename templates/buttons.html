@@ -1,0 +1,7 @@
+<div id=nav>
+    {% if home_button %}
+        <a href="{{ url_for('traces.home') }}" class="btn btn-default"><span class="glyphicon glyphicon-menu-left"></span> Back to home</a>
+    {% endif %}
+    <a href="{{ url_for('traces.new_trace') }}" class="btn btn-success"> Draw a new trace</a>
+    <a href="{{ url_for('traces.new_trace_gpx') }}" class="btn btn-success"> Load a new trace from GPX file</a>
+</div>
