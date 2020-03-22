@@ -2,6 +2,7 @@ import os
 
 base_dir = os.path.dirname(os.path.realpath(__file__)) 
 
+
 class BaseConfig(object):
     DEBUG = True
     TESTING = False
@@ -12,7 +13,7 @@ class BaseConfig(object):
     # Tracks types
     TRACKS_TYPES = ['enduro', 'XC', 'DH']
     # Allowed extensions to load traces (only gpx supported)
-    ALLOWED_EXTENSIONS = ['gpx',]
+    ALLOWED_EXTENSIONS = ['gpx', ]
     # Number of traces showed in on page in index.html
     PER_PAGE = 5
 

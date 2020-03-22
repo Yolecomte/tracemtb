@@ -52,7 +52,7 @@ def api_traces():
                          default=str)
 
 
-@main.route('/traces/new/', methods=['POST','GET'])
+@main.route('/traces/new/', methods=['POST', 'GET'])
 def new_trace():
     """
     Create a new trace from a user drawing
@@ -61,7 +61,7 @@ def new_trace():
         db.session.add(Traces(request.form['name'],
                               request.form['comment'],
                               request.form['type'],
-                              geom = 'SRID=4326;'+request.form['wkt_geom']))
+                              geom='SRID=4326;'+request.form['wkt_geom']))
         db.session.commit()
         
         flash("Your trace has been successfully created, Thank's", 'success')
@@ -71,7 +71,8 @@ def new_trace():
                            types_available=app.config['TRACKS_TYPES'], 
                            home_button=True)
 
-@main.route('/traces/new/gpx/', methods=['POST','GET'])
+
+@main.route('/traces/new/gpx/', methods=['POST', 'GET'])
 def new_trace_gpx():
     """
     Create a new trace from a GPX file
@@ -81,6 +82,7 @@ def new_trace_gpx():
         if 'gpx_file' not in request.files:
             error += 1
             flash('No file supplied...', 'error')
+            gpx_file = None
         else:
             gpx_file = request.files['gpx_file']
         
@@ -91,12 +93,12 @@ def new_trace_gpx():
             if not allowed_file(gpx_file.filename):
                 error += 1
                 flash('Your file is not a valid GPX file', 'error')
-        except:
+        except Exception as _:
             pass
 
         if error:
             return redirect(request.url)
-        
+        gpx = None
         if gpx_file and allowed_file(gpx_file.filename):
             filename = secure_filename(gpx_file.filename)
             gpx_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -133,9 +135,9 @@ def new_trace_gpx():
             wkt = wkt[:-1] + ')'
         
         db.session.add(Traces(request.form['name'],
-                            request.form['comment'],
-                            request.form['type'],
-                            geom = wkt))
+                              request.form['comment'],
+                              request.form['type'],
+                              geom=wkt))
         db.session.commit()
         flash('Your trace has been successfully loaded!', 'success')
     
@@ -156,14 +158,15 @@ def delete_trace(trace_id):
     flash('The trace has been succesfully deleted!', 'success')
     return redirect(url_for('main.home'))
 
+
 @main.route('/traces/<trace_id>')
 def trace(trace_id):
     """
     Retrieve single trace datas 
     """
-    trace = Traces.query.get(trace_id)
+    trace_data = Traces.query.get(trace_id)
     return render_template('traces/trace_detail.html',
-                           trace=trace, 
+                           trace=trace_data,
                            home_button=True)
 
 
@@ -172,8 +175,8 @@ def api_trace(trace_id):
     """
     Retrieve the geometry of a single trace to show it on the map
     """
-    trace = conn().get_single_data_as_geojson(Traces.__tablename__, trace_id)
-    return geojson.dumps(trace,
+    trace_data = conn().get_single_data_as_geojson(Traces.__tablename__, trace_id)
+    return geojson.dumps(trace_data,
                          indent=4, 
                          sort_keys=True, 
                          default=str)
@@ -186,18 +189,18 @@ def edit_trace(trace_id):
     """
     if request.method == 'POST':
         db.session.query(Traces).filter(Traces.id == trace_id).update(
-                                {'name' : request.form['name'],
+                                {'name': request.form['name'],
                                  'comment': request.form['comment'],
-                                 'type' : request.form['type'],
-                                 'geom' : 'SRID=4326;'+request.form['wkt_geom']})
+                                 'type': request.form['type'],
+                                 'geom': 'SRID=4326;'+request.form['wkt_geom']})
         db.session.commit()
         flash('Your trace has been succesfully updated!', 'success')
         return redirect(url_for('main.trace', trace_id=trace_id))
-    trace = Traces.query.get(trace_id) 
+    trace_data = Traces.query.get(trace_id)
     return render_template('traces/trace_edit.html',
-                            trace=trace, 
-                            types_available=app.config['TRACKS_TYPES'], 
-                            home_button=True)
+                           trace=trace_data,
+                           types_available=app.config['TRACKS_TYPES'],
+                           home_button=True)
 
 
 @main.route('/api/traces/download/<trace_id>')
@@ -205,11 +208,11 @@ def download(trace_id):
     """
     Create a GPX file and expose it to the user for downloading
     """
-    trace = conn().get_single_data_as_geojson(Traces.__tablename__, trace_id)
+    trace_data = conn().get_single_data_as_geojson(Traces.__tablename__, trace_id)
 
     gpx = _gpx.GPX()
         
-    coords = list(geojson.utils.coords(trace[0]))
+    coords = list(geojson.utils.coords(trace_data[0]))
 
     gpx_track = _gpx.GPXTrack()
     gpx.tracks.append(gpx_track)
@@ -220,4 +223,6 @@ def download(trace_id):
     for coord in coords:
         gpx_segment.points.append(_gpx.GPXTrackPoint(coord[0], coord[1], elevation=0))
     
-    return Response(gpx.to_xml(), mimetype="text/plain", headers={"Content-Disposition":"attachment;filename=track.gpx"})
+    return Response(gpx.to_xml(),
+                    mimetype="text/plain",
+                    headers={"Content-Disposition": "attachment;filename=track.gpx"})
