@@ -5,7 +5,7 @@ from traceVtt import db
 from traceVtt.models import Traces
 import os
 
-from utils import DB_GeoJson
+from .utils import DB_GeoJson
 import geojson
 import gpxpy
 from gpxpy import gpx as _gpx
@@ -24,7 +24,7 @@ def conn():
 
 @traces.route('/')
 def index():
-    return redirect(url_for('main.home'))
+    return redirect(url_for('base.home'))
 
     
 @traces.route('/page/')
@@ -65,7 +65,7 @@ def new_trace():
         db.session.commit()
         
         flash("Your trace has been successfully created, Thank's", 'success')
-        return redirect(url_for('main.home'))
+        return redirect(url_for('base.home'))
 
     return render_template('traces/new_trace.html', 
                            types_available=app.config['TRACKS_TYPES'], 
@@ -141,7 +141,7 @@ def new_trace_gpx():
         db.session.commit()
         flash('Your trace has been successfully loaded!', 'success')
     
-        return redirect(url_for('main.home'))
+        return redirect(url_for('base.home'))
     
     return render_template('traces/new_gpx_trace.html', 
                            types_available=app.config['TRACKS_TYPES'], 
@@ -156,7 +156,7 @@ def delete_trace(trace_id):
     db.session.delete(Traces.query.get(trace_id))
     db.session.commit()
     flash('The trace has been succesfully deleted!', 'success')
-    return redirect(url_for('main.home'))
+    return redirect(url_for('base.home'))
 
 
 @traces.route('/<trace_id>')
@@ -191,11 +191,11 @@ def edit_trace(trace_id):
         db.session.query(Traces).filter(Traces.id == trace_id).update(
                                 {'name': request.form['name'],
                                  'comment': request.form['comment'],
-                                 'type': request.form['type'],
+                                 'type_trace': request.form['type'],
                                  'geom': 'SRID=4326;'+request.form['wkt_geom']})
         db.session.commit()
         flash('Your trace has been succesfully updated!', 'success')
-        return redirect(url_for('main.trace', trace_id=trace_id))
+        return redirect(url_for('traces.trace', trace_id=trace_id))
     trace_data = Traces.query.get(trace_id)
     return render_template('traces/trace_edit.html',
                            trace=trace_data,
